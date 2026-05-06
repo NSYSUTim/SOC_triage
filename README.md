@@ -35,7 +35,7 @@ npm run dev
 npm run build
 ```
 
-開啟 http://localhost:5173 查看
+開啟 [http://localhost:5173](https://soc-triage.vercel.app/) 查看
 
 ## 📁 專案結構
 
