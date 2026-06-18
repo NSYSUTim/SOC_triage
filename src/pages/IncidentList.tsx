@@ -1,7 +1,7 @@
 import { useState, useMemo } from 'react';
 import { mockIncidents } from '../mocks/data';
 import { IncidentCard } from '../components/IncidentCard';
-import { SeverityLevel, IncidentStatus } from '../types';
+import { SeverityLevel, IncidentStatus, ModelVariant } from '../types';
 import { List, Filter, SortDesc } from 'lucide-react';
 
 /** Incident 清單頁面 */
@@ -11,6 +11,7 @@ export function IncidentList() {
     const [sortOrder, setSortOrder] = useState<'desc' | 'asc'>('desc');
     const [filterSeverity, setFilterSeverity] = useState<SeverityLevel | 'all'>('all');
     const [filterStatus, setFilterStatus] = useState<IncidentStatus | 'all'>('all');
+    const [filterMethod, setFilterMethod] = useState<ModelVariant | 'all'>('all');
     const [topK, setTopK] = useState<number>(0); // 0 = 顯示全部
 
     // 處理排序和篩選
@@ -25,6 +26,10 @@ export function IncidentList() {
         // 篩選 status
         if (filterStatus !== 'all') {
             result = result.filter(inc => inc.status === filterStatus);
+        }
+
+        if (filterMethod !== 'all') {
+            result = result.filter(inc => inc.method_variant === filterMethod);
         }
 
         // 排序
@@ -53,7 +58,7 @@ export function IncidentList() {
         }
 
         return result;
-    }, [sortBy, sortOrder, filterSeverity, filterStatus, topK]);
+    }, [sortBy, sortOrder, filterSeverity, filterStatus, filterMethod, topK]);
 
     return (
         <div>
@@ -61,7 +66,7 @@ export function IncidentList() {
             <div className="page-header">
                 <h1 className="page-title">
                     <List size={28} style={{ marginRight: '12px', verticalAlign: 'middle' }} />
-                    Incidents
+                    Incident Queue
                 </h1>
                 <span style={{
                     background: 'var(--accent-gradient)',
@@ -121,6 +126,20 @@ export function IncidentList() {
                     >
                         <option value="desc">Descending</option>
                         <option value="asc">Ascending</option>
+                    </select>
+                </div>
+
+                <div className="filter-group">
+                    <label className="filter-label">Method:</label>
+                    <select
+                        value={filterMethod}
+                        onChange={e => setFilterMethod(e.target.value as ModelVariant | 'all')}
+                    >
+                        <option value="all">All</option>
+                        <option value="baseline">Baseline</option>
+                        <option value="cross_host">Cross-Host</option>
+                        <option value="hierarchical_context">Hierarchical</option>
+                        <option value="rebalanced">Rebalanced</option>
                     </select>
                 </div>
 

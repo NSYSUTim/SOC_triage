@@ -66,8 +66,8 @@ function App() {
                         fontSize: '0.75rem',
                         color: 'var(--text-muted)'
                     }}>
-                        <div>SOC Triage Demo v0.1.0</div>
-                        <div style={{ marginTop: '4px' }}>前端 Demo (Mock Data)</div>
+                        <div>SOC Triage Demo v0.2.0</div>
+                        <div style={{ marginTop: '4px' }}>AIT-ADS report-aligned mock data</div>
                     </div>
                 </aside>
 

@@ -339,6 +339,37 @@ a:hover {
   font-size: 0.875rem;
 }
 
+.metric-panel {
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-sm);
+  padding: var(--spacing-md);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-height: 82px;
+}
+
+.metric-label {
+  color: var(--text-muted);
+  font-size: 0.75rem;
+  text-transform: uppercase;
+}
+
+.code-grid {
+  display: grid;
+  grid-template-columns: 52px 1fr;
+  gap: 10px 12px;
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+}
+
+.code-grid span {
+  font-family: var(--font-mono);
+  color: var(--accent-primary);
+  font-weight: 700;
+}
+
 /* ---------- 頁面標題 ---------- */
 .page-header {
   display: flex;
@@ -527,5 +558,11 @@ select:focus, input:focus {
   
   .filter-bar {
     flex-direction: column;
+  }
+
+  .data-table {
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
   }
 }

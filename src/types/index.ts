@@ -11,6 +11,12 @@ export type IncidentStatus = "new" | "in_progress" | "resolved" | "suppressed";
 /** 日誌事件動作 */
 export type EventAction = "allow" | "deny" | "alert" | "drop";
 
+/** 報告中比較的 DeepCASE-style 方法 */
+export type ModelVariant = "baseline" | "cross_host" | "hierarchical_context" | "rebalanced";
+
+/** 前端呈現的 triage 決策 */
+export type TriageDecision = "incident" | "benign" | "rejected";
+
 // ============================================
 // 單筆日誌事件 (Raw Event)
 // ============================================
@@ -60,6 +66,11 @@ export interface Incident {
     // DeepCASE 分群資訊
     cluster_id?: number;
     cluster_label?: string;
+    method_variant: ModelVariant;
+    triage_decision: TriageDecision;
+    model_confidence?: number;
+    reject_reason?: string;
+    analyst_focus?: string;
 
     // LLM 產出的回報
     llm_report?: LLMReport;
@@ -140,4 +151,27 @@ export interface DashboardStats {
     low_count: number;
     resolved_today: number;
     avg_priority: number;
+    train_events: number;
+    test_events: number;
+    best_method: ModelVariant;
+    best_binary_f1: number;
+    workload_reduction: number;
+    reject_rate: number;
+}
+
+// ============================================
+// 論文正式結果摘要
+// ============================================
+export interface MethodResult {
+    method: ModelVariant;
+    label: string;
+    role: string;
+    clusters: number;
+    workload_reduction: number;
+    cluster_purity: number;
+    auto_decided_rate: number;
+    reject_rate: number;
+    binary_f1: number;
+    weighted_f1: number | null;
+    interpretation: string;
 }

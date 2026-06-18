@@ -1,70 +1,95 @@
-# SOC Triage 自動化系統 - 前端 Demo
+# SOC Triage Demo
 
-> 資安事件自動分流與優先排序系統的前端展示介面
+DeepCASE-style SOC event aggregation and incident-triage frontend demo.
 
-![React](https://img.shields.io/badge/React-18-61DAFB?logo=react)
-![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?logo=typescript)
-![Vite](https://img.shields.io/badge/Vite-6-646CFF?logo=vite)
+This repository contains the React + TypeScript interface used to present the
+capstone/research results for SOC alert aggregation. It is intentionally a
+frontend demo with mock data: the heavy DeepCASE reproduction, research variants,
+and formal AIT-ADS runs live in the companion research workspace.
 
-## 🎯 專案簡介
+## Project Scope
 
-本專案為 SOC (Security Operations Center) Triage 自動化系統的前端 Demo，模擬業界 SIEM Incident Review 介面，展示：
+The demo visualizes the workflow described in the report:
 
-- **DeepCASE** 事件序列關聯分群
-- **TEQ** 可行動性/優先級排序
-- **LLM** 自動化分析回報
+- DeepCASE-style context modeling and DBSCAN-based interpretation.
+- Cross-host and hierarchical-context variants as supporting ablations.
+- Class-rebalanced incident triage as the main proposed method.
+- Analyst-facing views for priority ranking, cluster interpretation, rejection
+  behavior, entity evidence, timeline review, and LLM-assisted response notes.
 
-## 🖥️ Demo 頁面
+The current public-facing data is aligned with the formal report snapshot dated
+2026-06-18.
 
-| 頁面 | 功能 |
-|------|------|
-| Dashboard | 統計總覽、Top 5 待處理 |
-| Incidents | 清單排序、篩選、Top-K |
-| Incident Detail | 詳情、時間線、LLM 回報 |
+## Formal Result Snapshot
 
-## 🚀 快速開始
+| Method | Clusters | Workload Reduction | Cluster Purity | Auto-Decided Rate | Reject Rate | Binary F1 | Weighted F1 |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| Baseline | 35 | 0.9373 | 0.9874 | 0.9468 | 0.0532 | 0.7617 | 0.0055 |
+| Cross-Host | 40 | 0.9410 | 0.9799 | 0.9019 | 0.0981 | 0.7638 | 0.0006 |
+| Hierarchical Context | 87 | 0.9383 | 0.9792 | 0.9423 | 0.0577 | 0.7796 | 0.0066 |
+| Rebalanced | 36 | 0.9365 | 0.9875 | 0.9307 | 0.0693 | 0.8088 | N/A |
 
-```bash
-# 安裝依賴
+The strongest defensible claim is the baseline-versus-rebalanced comparison:
+both use the same processed-file-order sequential split, and rebalanced improves
+binary incident F1 from 0.7617 to 0.8088 while preserving cluster quality.
+Cross-host and hierarchical-context are shown as supporting ablations because
+their sequence builders use timestamp sorting before splitting.
+
+## Demo Pages
+
+| Page | Purpose |
+| --- | --- |
+| Dashboard | Method results, triage metrics, and top priority incidents |
+| Incidents | Sortable/filterable incident queue with Top-K review |
+| Incident Detail | Cluster evidence, timeline, entity context, and AI response notes |
+
+## Quick Start
+
+```powershell
 npm install
-
-# 啟動開發伺服器
 npm run dev
+```
 
-# 建置生產版本
+Open the local URL shown by Vite, usually `http://localhost:5173`.
+Hosted demo: [soc-triage.vercel.app](https://soc-triage.vercel.app/).
+
+For a production build:
+
+```powershell
 npm run build
 ```
 
-開啟 [http://localhost:5173](https://soc-triage.vercel.app/) 查看
+## Repository Structure
 
-## 📁 專案結構
-
-```
+```text
 src/
-├── types/          # TypeScript 型別定義
-├── mocks/          # Mock 資料
-├── components/     # 可重用元件
-├── pages/          # 頁面
-├── App.tsx         # 主程式 + 路由
-└── index.css       # 全域樣式
+  components/    Reusable UI components for badges, cards, reports, timeline
+  mocks/         Report-aligned mock incidents and formal method metrics
+  pages/         Dashboard, incident queue, and incident detail views
+  types/         TypeScript models used by the demo
+
+figures/         SVG figures referenced by the report snapshot
 ```
 
-## 🛠️ 技術棧
+## Notes For Reviewers
 
-- **React 18** + **TypeScript**
-- **Vite** 建置工具
-- **React Router** 路由
-- **Lucide React** 圖示
+- This repository does not train or evaluate DeepCASE models directly.
+- Mock incidents are illustrative samples derived from the report's SOC triage
+  workflow, not a replacement for the formal experiment outputs.
+- The formal text snapshot is kept in
+  `report_sections_vi_ix_formal_latest.md` for easy review on GitHub.
+- The public claim should remain conservative: the rebalanced variant is the
+  strongest split-controlled improvement; context variants are useful ablations
+  that still need stricter split-unified validation.
 
-## 📝 開發狀態
+## Tech Stack
 
-- ✅ 基礎架構與路由
-- ✅ Incident 清單頁 (排序/篩選/Top-K)
-- ✅ Incident 詳情頁 (時間線/LLM 回報)
-- ✅ Dashboard 儀表板
-- ⬜ Entity Graph 溯源圖 (vis-network)
-- ⬜ 後端 API 整合
+- React 18
+- TypeScript 5
+- Vite 6
+- React Router
+- Lucide React
 
-## 📄 License
+## License
 
 MIT

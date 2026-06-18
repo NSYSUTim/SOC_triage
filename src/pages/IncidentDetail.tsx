@@ -1,6 +1,6 @@
 import { useParams, Link } from 'react-router-dom';
 import { getIncidentById, getEventsByIncidentId, mockEntityGraph } from '../mocks/data';
-import { SeverityBadge, StatusBadge, EntityTag } from '../components/Badges';
+import { SeverityBadge, StatusBadge, EntityTag, MethodBadge, DecisionBadge } from '../components/Badges';
 import { Timeline } from '../components/Timeline';
 import { LLMReportView } from '../components/LLMReportView';
 import {
@@ -68,6 +68,8 @@ export function IncidentDetail() {
                             </span>
                             <SeverityBadge severity={incident.severity_level} />
                             <StatusBadge status={incident.status} />
+                            <MethodBadge method={incident.method_variant} />
+                            <DecisionBadge decision={incident.triage_decision} />
                         </div>
                         <h1 style={{ fontSize: '1.5rem', fontWeight: 700, marginBottom: '12px' }}>
                             {incident.title}
@@ -133,6 +135,47 @@ export function IncidentDetail() {
                         </div>
                     )}
                 </div>
+
+                <div style={{
+                    marginTop: '20px',
+                    display: 'grid',
+                    gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
+                    gap: '12px'
+                }}>
+                    <div className="metric-panel">
+                        <span className="metric-label">Method Variant</span>
+                        <strong>{incident.method_variant.replace('_', ' ')}</strong>
+                    </div>
+                    <div className="metric-panel">
+                        <span className="metric-label">Model Confidence</span>
+                        <strong>
+                            {incident.model_confidence !== undefined
+                                ? `${(incident.model_confidence * 100).toFixed(0)}%`
+                                : 'N/A'}
+                        </strong>
+                    </div>
+                    <div className="metric-panel">
+                        <span className="metric-label">Prediction Code</span>
+                        <strong>{incident.cluster_id ?? 'Unassigned'}</strong>
+                    </div>
+                    <div className="metric-panel">
+                        <span className="metric-label">Review Focus</span>
+                        <span>{incident.analyst_focus || 'General SOC validation'}</span>
+                    </div>
+                </div>
+
+                {incident.reject_reason && (
+                    <div style={{
+                        marginTop: '12px',
+                        padding: '12px 16px',
+                        borderRadius: 'var(--border-radius-sm)',
+                        background: 'rgba(234, 179, 8, 0.1)',
+                        border: '1px solid rgba(234, 179, 8, 0.35)',
+                        color: 'var(--severity-medium)'
+                    }}>
+                        Reject reason: {incident.reject_reason}
+                    </div>
+                )}
             </div>
 
             {/* 兩欄佈局 */}
@@ -220,6 +263,27 @@ export function IncidentDetail() {
                                 使用 vis-network 呈現 {mockEntityGraph.nodes.length} 個節點、
                                 {mockEntityGraph.edges.length} 條關聯
                             </p>
+                        </div>
+                    </div>
+
+                    <div className="card" style={{ marginTop: '24px' }}>
+                        <h3 style={{
+                            fontSize: '1.1rem',
+                            fontWeight: 600,
+                            marginBottom: '16px',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '8px'
+                        }}>
+                            <AlertTriangle size={18} color="var(--severity-medium)" />
+                            Prediction Code Semantics
+                        </h3>
+                        <div className="code-grid">
+                            <span>-4</span><p>Benign/default cluster score</p>
+                            <span>-3</span><p>Nearest cluster still exceeds the distance threshold</p>
+                            <span>-2</span><p>Unseen event type during prediction</p>
+                            <span>-1</span><p>Low model confidence rejection</p>
+                            <span>0+</span><p>Cluster-level predicted attack/incident score</p>
                         </div>
                     </div>
                 </div>

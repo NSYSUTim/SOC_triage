@@ -1,0 +1,201 @@
+﻿<svg xmlns="http://www.w3.org/2000/svg" width="1700" height="920" viewBox="0 0 1700 920">
+  <defs>
+    <style>
+      .title { font-family: Arial, Helvetica, sans-serif; font-size: 25px; font-weight: 700; fill: #111; }
+      .panel-title { font-family: Arial, Helvetica, sans-serif; font-size: 18px; font-weight: 700; fill: #111; }
+      .label { font-family: Arial, Helvetica, sans-serif; font-size: 15px; fill: #111; }
+      .small { font-family: Arial, Helvetica, sans-serif; font-size: 13px; fill: #222; }
+      .tiny { font-family: Arial, Helvetica, sans-serif; font-size: 11px; fill: #333; }
+      .caption { font-family: "Times New Roman", Times, serif; font-size: 18px; fill: #111; }
+      .caption-bold { font-family: "Times New Roman", Times, serif; font-size: 18px; font-weight: 700; fill: #111; }
+      .mono { font-family: Consolas, "Courier New", monospace; font-size: 13px; fill: #111; }
+      .box { fill: #fff; stroke: #111; stroke-width: 1.35; }
+      .soft { fill: #f7f8f9; stroke: #111; stroke-width: 1.15; }
+      .accent { fill: #eef5f6; stroke: #315f66; stroke-width: 1.25; }
+      .shade { fill: #e9ecef; stroke: #111; stroke-width: 1.05; }
+      .line { stroke: #111; stroke-width: 1.25; fill: none; }
+      .thin { stroke: #111; stroke-width: 0.9; fill: none; }
+      .dash { stroke: #111; stroke-width: 1.05; fill: none; stroke-dasharray: 5 4; }
+      .muted { fill: #555; }
+    </style>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8.5" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L8.5,3 L0,6 Z" fill="#111"/>
+    </marker>
+  </defs>
+
+  <rect x="0" y="0" width="1700" height="920" fill="#fff"/>
+  <text x="850" y="42" text-anchor="middle" class="title">Proposed DeepCASE-Based SOC Event Aggregation Framework</text>
+
+  <!-- 1. Input event sequences -->
+  <g id="input">
+    <rect x="42" y="88" width="245" height="370" class="box"/>
+    <circle cx="69" cy="115" r="13" fill="#fff" stroke="#111" stroke-width="1.3"/>
+    <text x="69" y="120" text-anchor="middle" class="panel-title">1</text>
+    <text x="91" y="120" class="panel-title">Input events</text>
+
+    <text x="66" y="154" class="label">Security event sequences</text>
+    <text x="66" y="178" class="small">AIT-ADS Wazuh / Suricata alerts</text>
+    <text x="66" y="198" class="small">per-machine event streams</text>
+
+    <g transform="translate(70,232)">
+      <rect x="0" y="0" width="28" height="20" class="shade"/>
+      <rect x="7" y="20" width="14" height="5" class="shade"/>
+      <line x1="39" y1="11" x2="67" y2="11" class="line" marker-end="url(#arrow)"/>
+      <text x="82" y="16" class="mono">e1 e2 e3 e4 e5</text>
+
+      <rect x="3" y="48" width="22" height="32" class="shade"/>
+      <line x1="39" y1="64" x2="67" y2="64" class="line" marker-end="url(#arrow)"/>
+      <text x="82" y="69" class="mono">e1 e2 e3</text>
+
+      <circle cx="14" cy="121" r="12" class="shade"/>
+      <line x1="39" y1="121" x2="67" y2="121" class="line" marker-end="url(#arrow)"/>
+      <text x="82" y="126" class="mono">e1 e2 e3 e4</text>
+    </g>
+
+    <rect x="66" y="390" width="198" height="42" class="soft"/>
+    <text x="165" y="407" text-anchor="middle" class="tiny">fields</text>
+    <text x="165" y="424" text-anchor="middle" class="mono">time, machine, event, label</text>
+  </g>
+
+  <line x1="287" y1="273" x2="335" y2="273" class="line" marker-end="url(#arrow)"/>
+
+  <!-- 2. Preprocessing -->
+  <g id="preprocessing">
+    <rect x="335" y="88" width="255" height="370" class="box"/>
+    <circle cx="362" cy="115" r="13" fill="#fff" stroke="#111" stroke-width="1.3"/>
+    <text x="362" y="120" text-anchor="middle" class="panel-title">2</text>
+    <text x="384" y="120" class="panel-title">Preprocessing</text>
+
+    <rect x="368" y="158" width="188" height="48" class="soft"/>
+    <text x="462" y="177" text-anchor="middle" class="label">Raw alerts</text>
+    <text x="462" y="195" text-anchor="middle" class="tiny">JSON IDS output</text>
+
+    <line x1="462" y1="206" x2="462" y2="242" class="line" marker-end="url(#arrow)"/>
+
+    <rect x="368" y="242" width="188" height="54" class="accent"/>
+    <text x="462" y="262" text-anchor="middle" class="label">DeepCASE-ready CSV</text>
+    <text x="462" y="280" text-anchor="middle" class="tiny">sequence construction</text>
+
+    <line x1="462" y1="296" x2="462" y2="331" class="line" marker-end="url(#arrow)"/>
+
+    <rect x="368" y="331" width="188" height="48" class="soft"/>
+    <text x="462" y="350" text-anchor="middle" class="label">Train / test split</text>
+    <text x="462" y="368" text-anchor="middle" class="tiny">machine context preserved</text>
+
+    <text x="462" y="420" text-anchor="middle" class="tiny">Ground-truth labels are</text>
+    <text x="462" y="436" text-anchor="middle" class="tiny">reserved for evaluation only.</text>
+  </g>
+
+  <line x1="590" y1="273" x2="638" y2="273" class="line" marker-end="url(#arrow)"/>
+
+  <!-- 3. DeepCASE backbone and variants -->
+  <g id="modeling">
+    <rect x="638" y="88" width="542" height="520" class="box"/>
+    <circle cx="665" cy="115" r="13" fill="#fff" stroke="#111" stroke-width="1.3"/>
+    <text x="665" y="120" text-anchor="middle" class="panel-title">3</text>
+    <text x="687" y="120" class="panel-title">DeepCASE-based context modeling</text>
+
+    <rect x="680" y="150" width="456" height="72" class="soft"/>
+    <text x="908" y="174" text-anchor="middle" class="label">Shared backbone</text>
+    <text x="908" y="195" text-anchor="middle" class="small">ContextBuilder  ->  attention representation  ->  Interpreter input</text>
+    <text x="908" y="213" text-anchor="middle" class="tiny">one controlled component is changed at a time</text>
+
+    <g id="lanes">
+      <rect x="680" y="254" width="456" height="64" class="soft"/>
+      <text x="704" y="280" class="label">Baseline DeepCASE</text>
+      <text x="704" y="300" class="small">same-host context, k = 10; GRU ContextBuilder + attention</text>
+
+      <rect x="680" y="338" width="456" height="64" class="accent"/>
+      <text x="704" y="364" class="label">Cross-host context</text>
+      <text x="704" y="384" class="small">local stream + companion host stream; dual GRU with gated fusion</text>
+
+      <rect x="680" y="422" width="456" height="64" class="accent"/>
+      <text x="704" y="448" class="label">Hierarchical temporal context</text>
+      <text x="704" y="468" class="small">short-term context + compact memory; dual GRU with gated fusion</text>
+
+      <rect x="680" y="506" width="456" height="64" class="accent"/>
+      <text x="704" y="532" class="label">Class-rebalanced triage</text>
+      <text x="704" y="552" class="small">incident head with Focal Loss; calibrated binary decision</text>
+    </g>
+  </g>
+
+  <line x1="1180" y1="273" x2="1228" y2="273" class="line" marker-end="url(#arrow)"/>
+
+  <!-- 4. Interpreter -->
+  <g id="interpreter">
+    <rect x="1228" y="88" width="220" height="520" class="box"/>
+    <circle cx="1255" cy="115" r="13" fill="#fff" stroke="#111" stroke-width="1.3"/>
+    <text x="1255" y="120" text-anchor="middle" class="panel-title">4</text>
+    <text x="1277" y="120" class="panel-title">Interpreter</text>
+
+    <text x="1338" y="158" text-anchor="middle" class="label">Cluster scoring</text>
+    <text x="1338" y="179" text-anchor="middle" class="tiny">attention representation</text>
+    <text x="1338" y="195" text-anchor="middle" class="tiny">L1 distance</text>
+    <text x="1338" y="211" text-anchor="middle" class="tiny">DBSCAN clustering</text>
+
+    <g transform="translate(1262,245)">
+      <circle cx="32" cy="33" r="25" class="dash"/>
+      <circle cx="100" cy="33" r="25" class="dash"/>
+      <circle cx="66" cy="92" r="25" class="dash"/>
+      <circle cx="28" cy="30" r="4" fill="#111"/>
+      <circle cx="39" cy="38" r="4" fill="#111"/>
+      <circle cx="102" cy="28" r="4" fill="#111"/>
+      <circle cx="94" cy="43" r="4" fill="#111"/>
+      <circle cx="61" cy="89" r="4" fill="#111"/>
+      <circle cx="72" cy="100" r="4" fill="#111"/>
+    </g>
+
+    <rect x="1258" y="392" width="160" height="148" class="soft"/>
+    <text x="1338" y="413" text-anchor="middle" class="small">Prediction codes</text>
+    <text x="1273" y="438" class="tiny">-4 benign/default</text>
+    <text x="1273" y="458" class="tiny">-1 low confidence</text>
+    <text x="1273" y="478" class="tiny">-2 unseen event type</text>
+    <text x="1273" y="498" class="tiny">-3 distance reject</text>
+    <text x="1273" y="518" class="tiny">&gt;=0 cluster score</text>
+  </g>
+
+  <line x1="1448" y1="273" x2="1494" y2="273" class="line" marker-end="url(#arrow)"/>
+
+  <!-- 5. Evaluation -->
+  <g id="evaluation">
+    <rect x="1494" y="88" width="164" height="520" class="box"/>
+    <circle cx="1521" cy="115" r="13" fill="#fff" stroke="#111" stroke-width="1.3"/>
+    <text x="1521" y="120" text-anchor="middle" class="panel-title">5</text>
+    <text x="1543" y="120" class="panel-title">Evaluation</text>
+
+    <text x="1576" y="162" text-anchor="middle" class="label">Unified metrics</text>
+    <line x1="1518" y1="181" x2="1634" y2="181" class="thin"/>
+    <text x="1518" y="214" class="small">workload reduction</text>
+    <text x="1518" y="244" class="small">cluster purity</text>
+    <text x="1518" y="274" class="small">auto-decided rate</text>
+    <text x="1518" y="304" class="small">reject rate</text>
+    <text x="1518" y="334" class="small">binary F1</text>
+    <text x="1518" y="364" class="small">weighted F1</text>
+
+    <rect x="1515" y="425" width="122" height="116" class="soft"/>
+    <text x="1576" y="445" text-anchor="middle" class="tiny">controlled setup</text>
+    <text x="1576" y="466" text-anchor="middle" class="tiny">same AIT-ADS data</text>
+    <text x="1576" y="486" text-anchor="middle" class="tiny">fixed CPU settings</text>
+    <text x="1576" y="506" text-anchor="middle" class="tiny">hidden size 128</text>
+    <text x="1576" y="526" text-anchor="middle" class="tiny">10 epochs, 100 queries</text>
+  </g>
+
+  <!-- Caption area -->
+  <line x1="42" y1="685" x2="1658" y2="685" class="thin"/>
+  <text x="42" y="726" class="caption-bold">Fig. 1.</text>
+  <text x="100" y="726" class="caption">
+    Overview of the proposed DeepCASE-based SOC event aggregation framework.
+  </text>
+  <text x="42" y="755" class="caption">
+    The framework preserves the DeepCASE-style contextual modeling and interpreter pipeline while evaluating three controlled
+  </text>
+  <text x="42" y="784" class="caption">
+    extensions: cross-host context, hierarchical temporal context, and class-rebalanced triage. All variants are evaluated
+  </text>
+  <text x="42" y="813" class="caption">
+    under the same AIT-ADS data and fixed CPU settings to compare aggregation quality, rejection behavior, and detection
+  </text>
+  <text x="42" y="842" class="caption">
+    performance without changing the overall SOC event aggregation workflow.
+  </text>
+</svg>

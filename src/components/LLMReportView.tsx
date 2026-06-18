@@ -92,6 +92,15 @@ export function LLMReportView({ report }: LLMReportViewProps) {
                     </ul>
                 </div>
             )}
+
+            <div style={{
+                color: 'var(--text-muted)',
+                fontSize: '0.75rem',
+                borderTop: '1px solid var(--border-color)',
+                paddingTop: '12px'
+            }}>
+                Report note: mock LLM text is for analyst-facing explanation only; formal metrics are reported separately.
+            </div>
         </div>
     );
 }

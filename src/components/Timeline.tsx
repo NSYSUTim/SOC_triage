@@ -32,6 +32,13 @@ export function Timeline({ events }: TimelineProps) {
         }
     };
 
+    const formatBytes = (bytes?: number) => {
+        if (!bytes) return null;
+        if (bytes >= 1024 ** 3) return `${(bytes / 1024 ** 3).toFixed(1)} GB`;
+        if (bytes >= 1024 ** 2) return `${(bytes / 1024 ** 2).toFixed(1)} MB`;
+        return `${bytes.toLocaleString('en-US')} bytes`;
+    };
+
     return (
         <div className="timeline">
             {sortedEvents.map((event, index) => (
@@ -99,6 +106,11 @@ export function Timeline({ events }: TimelineProps) {
                             {event.threat_name && (
                                 <span style={{ color: 'var(--severity-high)' }}>
                                     <strong>Threat:</strong> {event.threat_name}
+                                </span>
+                            )}
+                            {formatBytes(event.bytes_sent) && (
+                                <span>
+                                    <strong>Sent:</strong> {formatBytes(event.bytes_sent)}
                                 </span>
                             )}
                         </div>

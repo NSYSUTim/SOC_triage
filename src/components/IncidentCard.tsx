@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import { Incident } from '../types';
-import { PriorityBadge, SeverityBadge, StatusBadge, EntityTag } from './Badges';
-import { Clock, AlertTriangle, ArrowRight } from 'lucide-react';
+import { PriorityBadge, SeverityBadge, StatusBadge, EntityTag, MethodBadge, DecisionBadge } from './Badges';
+import { Clock, AlertTriangle, ArrowRight, Network } from 'lucide-react';
 
 interface IncidentCardProps {
     incident: Incident;
@@ -36,6 +36,8 @@ export function IncidentCard({ incident }: IncidentCardProps) {
                             </span>
                             <SeverityBadge severity={incident.severity_level} />
                             <StatusBadge status={incident.status} />
+                            <MethodBadge method={incident.method_variant} />
+                            <DecisionBadge decision={incident.triage_decision} />
                         </div>
                         <h3 className="card-title" style={{ fontSize: '1.1rem' }}>
                             {incident.title}
@@ -69,6 +71,28 @@ export function IncidentCard({ incident }: IncidentCardProps) {
                     {incident.entities.threats.slice(0, 2).map(t => (
                         <EntityTag key={t} type="threat" value={t} />
                     ))}
+                </div>
+
+                <div style={{
+                    display: 'grid',
+                    gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))',
+                    gap: '10px',
+                    marginBottom: '16px',
+                    color: 'var(--text-secondary)',
+                    fontSize: '0.8rem'
+                }}>
+                    <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                        <Network size={14} />
+                        Cluster: {incident.cluster_label || 'Unassigned'}
+                    </span>
+                    {incident.model_confidence !== undefined && (
+                        <span>Confidence: {(incident.model_confidence * 100).toFixed(0)}%</span>
+                    )}
+                    {incident.reject_reason && (
+                        <span style={{ color: 'var(--severity-medium)' }}>
+                            Reject: {incident.reject_reason}
+                        </span>
+                    )}
                 </div>
 
                 {/* 底部資訊 */}

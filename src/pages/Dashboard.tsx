@@ -1,22 +1,26 @@
 import { Link } from 'react-router-dom';
-import { mockDashboardStats, mockIncidents } from '../mocks/data';
-import { PriorityBadge, SeverityBadge } from '../components/Badges';
+import { formalMethodResults, mockDashboardStats, mockIncidents } from '../mocks/data';
+import { MethodBadge, PriorityBadge, SeverityBadge } from '../components/Badges';
 import {
-    AlertTriangle,
-    Shield,
-    CheckCircle,
     TrendingUp,
     ArrowRight,
-    Activity
+    Activity,
+    Database,
+    Gauge,
+    ListChecks
 } from 'lucide-react';
 
 /** 儀表板頁面 */
 export function Dashboard() {
     const stats = mockDashboardStats;
+    const bestResult = formalMethodResults.find(result => result.method === stats.best_method);
     const topIncidents = mockIncidents
         .filter(inc => inc.status === 'new' || inc.status === 'in_progress')
         .sort((a, b) => b.priority - a.priority)
         .slice(0, 5);
+
+    const formatPct = (value: number) => `${(value * 100).toFixed(2)}%`;
+    const formatCount = (value: number) => value.toLocaleString('en-US');
 
     return (
         <div>
@@ -24,10 +28,10 @@ export function Dashboard() {
             <div className="page-header">
                 <h1 className="page-title">
                     <Activity size={28} style={{ marginRight: '12px', verticalAlign: 'middle' }} />
-                    SOC Dashboard
+                    SOC Triage Research Dashboard
                 </h1>
                 <span style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>
-                    上次更新：{new Date().toLocaleString('zh-TW')}
+                    Formal snapshot: 2026-06-18
                 </span>
             </div>
 
@@ -39,61 +43,103 @@ export function Dashboard() {
                 marginBottom: '32px'
             }}>
                 <div className="stat-card">
-                    <div className="stat-value">{stats.total_incidents}</div>
+                    <div className="stat-value">{formatCount(stats.test_events)}</div>
                     <div className="stat-label">
-                        <Shield size={16} style={{ marginRight: '4px', verticalAlign: 'middle' }} />
-                        Total Incidents
+                        <Database size={16} style={{ marginRight: '4px', verticalAlign: 'middle' }} />
+                        Test Events
                     </div>
                 </div>
 
                 <div className="stat-card" style={{ borderLeft: '4px solid var(--status-new)' }}>
                     <div className="stat-value" style={{ color: 'var(--status-new)' }}>
-                        {stats.new_incidents}
+                        {formatCount(stats.train_events)}
                     </div>
-                    <div className="stat-label">New (待處理)</div>
+                    <div className="stat-label">Training Events</div>
                 </div>
 
                 <div className="stat-card" style={{ borderLeft: '4px solid var(--severity-critical)' }}>
                     <div className="stat-value" style={{ color: 'var(--severity-critical)' }}>
-                        {stats.critical_count}
+                        {formatPct(stats.best_binary_f1)}
                     </div>
                     <div className="stat-label">
-                        <AlertTriangle size={16} style={{ marginRight: '4px', verticalAlign: 'middle' }} />
-                        Critical
+                        <Gauge size={16} style={{ marginRight: '4px', verticalAlign: 'middle' }} />
+                        Best Binary F1
                     </div>
                 </div>
 
                 <div className="stat-card" style={{ borderLeft: '4px solid var(--severity-high)' }}>
                     <div className="stat-value" style={{ color: 'var(--severity-high)' }}>
-                        {stats.high_count}
+                        {formatPct(stats.workload_reduction)}
                     </div>
-                    <div className="stat-label">High</div>
+                    <div className="stat-label">Workload Reduction</div>
                 </div>
 
                 <div className="stat-card" style={{ borderLeft: '4px solid var(--status-resolved)' }}>
                     <div className="stat-value" style={{ color: 'var(--status-resolved)' }}>
-                        {stats.resolved_today}
+                        {bestResult?.clusters ?? '-'}
                     </div>
                     <div className="stat-label">
-                        <CheckCircle size={16} style={{ marginRight: '4px', verticalAlign: 'middle' }} />
-                        今日已處理
+                        <ListChecks size={16} style={{ marginRight: '4px', verticalAlign: 'middle' }} />
+                        Rebalanced Clusters
                     </div>
                 </div>
 
                 <div className="stat-card">
-                    <div className="stat-value">{stats.avg_priority.toFixed(1)}</div>
+                    <div className="stat-value">{formatPct(stats.reject_rate)}</div>
                     <div className="stat-label">
                         <TrendingUp size={16} style={{ marginRight: '4px', verticalAlign: 'middle' }} />
-                        平均 Priority
+                        Rebalanced Reject Rate
                     </div>
                 </div>
+            </div>
+
+            <div className="card" style={{ marginBottom: '24px' }}>
+                <div className="card-header">
+                    <div>
+                        <h2 style={{ fontSize: '1.2rem', fontWeight: 600 }}>
+                            Formal Method Results
+                        </h2>
+                        <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem', marginTop: '4px' }}>
+                            AIT-ADS formal CPU runs with hidden size 128, 10 epochs, and 100 query iterations.
+                        </p>
+                    </div>
+                </div>
+
+                <table className="data-table">
+                    <thead>
+                        <tr>
+                            <th>Method</th>
+                            <th>Role</th>
+                            <th>Clusters</th>
+                            <th>Workload</th>
+                            <th>Purity</th>
+                            <th>Reject</th>
+                            <th>Binary F1</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {formalMethodResults.map(result => (
+                            <tr key={result.method}>
+                                <td><MethodBadge method={result.method} /></td>
+                                <td>{result.role}</td>
+                                <td style={{ fontFamily: 'var(--font-mono)' }}>{result.clusters}</td>
+                                <td style={{ fontFamily: 'var(--font-mono)' }}>{formatPct(result.workload_reduction)}</td>
+                                <td style={{ fontFamily: 'var(--font-mono)' }}>{formatPct(result.cluster_purity)}</td>
+                                <td style={{ fontFamily: 'var(--font-mono)' }}>{formatPct(result.reject_rate)}</td>
+                                <td style={{ fontFamily: 'var(--font-mono)', fontWeight: 700 }}>
+                                    {formatPct(result.binary_f1)}
+                                </td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
             </div>
 
             {/* Top 5 待處理 */}
             <div className="card">
                 <div className="card-header">
                     <h2 style={{ fontSize: '1.2rem', fontWeight: 600 }}>
-                        🔥 Top 5 待處理 Incidents
+                        Top 5 Review Queue
                     </h2>
                     <Link to="/incidents" className="btn btn-secondary">
                         View All <ArrowRight size={16} />
@@ -107,6 +153,7 @@ export function Dashboard() {
                             <th>Title</th>
                             <th>Severity</th>
                             <th>Priority</th>
+                            <th>Method</th>
                             <th>Events</th>
                         </tr>
                     </thead>
@@ -130,6 +177,7 @@ export function Dashboard() {
                                 </td>
                                 <td><SeverityBadge severity={incident.severity_level} /></td>
                                 <td><PriorityBadge priority={incident.priority} /></td>
+                                <td><MethodBadge method={incident.method_variant} /></td>
                                 <td style={{ fontFamily: 'var(--font-mono)' }}>{incident.event_count}</td>
                             </tr>
                         ))}
@@ -149,27 +197,27 @@ export function Dashboard() {
             }}>
                 <div style={{ textAlign: 'center' }}>
                     <div style={{ fontSize: '1.5rem', fontWeight: 700, color: 'var(--severity-medium)' }}>
-                        {stats.medium_count}
+                        +4.71pt
                     </div>
-                    <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Medium</div>
+                    <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Rebalanced F1 Gain</div>
                 </div>
                 <div style={{ textAlign: 'center' }}>
                     <div style={{ fontSize: '1.5rem', fontWeight: 700, color: 'var(--severity-low)' }}>
-                        {stats.low_count}
+                        0.9875
                     </div>
-                    <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Low</div>
+                    <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Cluster Purity</div>
                 </div>
                 <div style={{ textAlign: 'center' }}>
                     <div style={{ fontSize: '1.5rem', fontWeight: 700 }}>
-                        {Math.round((stats.resolved_today / stats.new_incidents) * 100)}%
+                        35 to 36
                     </div>
-                    <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>處理率</div>
+                    <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Cluster Count</div>
                 </div>
                 <div style={{ textAlign: 'center' }}>
                     <div style={{ fontSize: '1.5rem', fontWeight: 700, color: 'var(--accent-primary)' }}>
-                        {stats.critical_count + stats.high_count}
+                        +1.61pt
                     </div>
-                    <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>高風險總計</div>
+                    <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Reject Increase</div>
                 </div>
             </div>
         </div>
